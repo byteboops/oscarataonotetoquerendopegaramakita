@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pt-BR" lang="pt-BR" dir="ltr" translate="no" class="notranslate" id="atomic" prefix="og: http://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:title" content="OS CARA TÃO NO TETO NA MALDADE QUERENDO PEGAR A MAKITA!" />
+    <meta property="og:description" content="Neste jogo, proteja a sua Makita de ladrões ou roube a Makita de outros!" />
+    <title>Os cara tão no teto!🪚</title>
+    <link rel="icon" type="image/svg+xml" href="https://files.catbox.moe/4bvqj9.svg" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" crossorigin="anonymous" />
+    <style type="text/css">/*<![CDATA[*/
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .game-header {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            border: 2px solid #ffcc00;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .game-title {
+            font-size: 2.5rem;
+            color: #ffcc00;
+            text-shadow: 3px 3px 0 #ff6600;
+            margin-bottom: 10px;
+        }
+        
+        .game-subtitle {
+            font-size: 1.2rem;
+            color: #ffcc00;
+        }
+        
+        .game-canvas {
+            width: 100%;
+            height: 400px;
+            background: #0d1b2a;
+            border: 3px solid #ffcc00;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .character {
+            position: absolute;
+            transition: all 0.2s;
+        }
+        
+        #protector {
+            width: 60px;
+            height: 80px;
+            background: linear-gradient(to bottom, #3366ff, #0033cc);
+            border-radius: 10px 10px 0 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        #thief {
+            width: 50px;
+            height: 70px;
+            background: linear-gradient(to bottom, #666666, #333333);
+            border-radius: 10px 10px 0 0;
+            top: 0;
+            left: 30%;
+        }
+        
+        #makita {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-image: url('https://files.catbox.moe/e30hw5.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
+        .slipper {
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            background: #ffcc00;
+            border-radius: 50% 50% 0 0;
+            transform: rotate(45deg);
+            display: none;
+        }
+        
+        .mode-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 0 #cc5200;
+        }
+        
+        .protector-btn {
+            background: linear-gradient(to bottom, #ff9900, #ff6600);
+        }
+        
+        .thief-btn {
+            background: linear-gradient(to bottom, #666666, #333333);
+        }
+        
+        .mode-btn.active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #cc5200;
+        }
+        
+        .control-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .protector-control {
+            background: linear-gradient(to bottom, #3366ff, #0033cc);
+        }
+        
+        .thief-control {
+            background: linear-gradient(to bottom, #666666, #333333);
+        }
+        
+        .slipper-btn {
+            background: linear-gradient(to bottom, #ff9900, #ff6600);
+        }
+        
+        .game-info {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid #ffcc00;
+            text-align: center;
+            z-index: 100;
+            display: none;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .message h2 {
+            color: #ffcc00;
+            margin-bottom: 15px;
+        }
+        
+        .restart-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background: linear-gradient(to bottom, #00cc66, #00994d);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .makita-glow {
+            animation: glow 1s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px #00ccff); }
+            to { filter: drop-shadow(0 0 15px #00ccff) drop-shadow(0 0 25px #00ccff); }
+        }
+        
+        .slipper-fly {
+            animation: slipperFly 0.3s linear;
+        }
+        
+        @keyframes slipperFly {
+            0% { transform: translateY(0) rotate(45deg); }
+            100% { transform: translateY(-400px) rotate(45deg); }
+        }
+        
+        .thief-hit {
+            animation: thiefHit 0.5s;
+        }
+        
+        @keyframes thiefHit {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(20px); }
+            100% { transform: translateY(400px); }
+        }
+        
+        .mother-shout {
+            position: absolute;
+            color: #ff0000;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #000;
+            display: none;
+        }
+        
+        .thief-steal {
+            animation: thiefSteal 1s forwards;
+        }
+        
+        @keyframes thiefSteal {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-400px); }
+        }
+        
+        .score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 1.2rem;
+            color: #ffcc00;
+            z-index: 10;
+        }
+        
+        .timer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2rem;
+            color: #ffcc00;
+            z-index: 10;
+        }
+        
+        .ai-thief {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background: linear-gradient(to bottom, #666666, #333333);
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .lives {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            color: #ffcc00;
+            z-index: 10;
+        }
+        
+        .thief-lives {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            color: #ffcc00;
+            z-index: 10;
+        }
+    
+/*]]>*/</style>
+</head>
+<body>
+    <div class="container py-4">
+        <header class="game-header text-center">
+            <h1 class="game-title">MAKITA NIGHT FEVER</h1>
+            <p class="game-subtitle">CHINELADA MORTAL - A MAKITA É SAGRADA!</p>
+        </header>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="d-flex justify-content-center gap-3 mb-4">
+                    <button class="mode-btn protector-btn active" id="protector-btn">MODO PROTEGEDOR</button>
+                    <button class="mode-btn thief-btn" id="thief-btn">MODO LADRÃO</button>
+                </div>
+                
+                <div class="game-canvas" id="gameCanvas">
+                    <div class="score" id="score">Pontuação: 0</div>
+                    <div class="timer" id="timer">Tempo: 60s</div>
+                    <div class="lives" id="lives">Vidas: 3</div>
+                    <div class="thief-lives" id="thiefLives" style="display: none;">Vidas Ladrão: 3</div>
+                    <div class="character" id="protector"></div>
+                    <div class="character" id="thief"></div>
+                    <div class="slipper" id="slipper"></div>
+                    <div id="makita" class="makita-glow"></div>
+                    <div class="mother-shout" id="motherShout">JÁ CHEGOU O SEU FIM, MOLEQUE!</div>
+                </div>
+                
+                <div class="controls" id="protector-controls">
+                    <div class="d-flex justify-content-center gap-3">
+                        <button class="control-btn protector-control" id="left-btn">← ESQUERDA</button>
+                        <button class="control-btn protector-control" id="right-btn">DIREITA →</button>
+                        <button class="control-btn slipper-btn" id="slipper-btn">GRITAR PELA MÃE! 👆</button>
+                    </div>
+                </div>
+                
+                <div class="thief-controls" id="thief-controls" style="display: none;">
+                    <div class="d-flex justify-content-center gap-3">
+                        <button class="control-btn thief-control" id="thief-left-btn">← ESQUERDA</button>
+                        <button class="control-btn thief-control" id="thief-right-btn">DIREITA →</button>
+                        <button class="control-btn thief-control" id="thief-down-btn">DESCER ↓</button>
+                        <button class="control-btn slipper-btn" id="thief-steal-btn">ROUBAR MAKITA! 🛠️</button>
+                    </div>
+                </div>
+                
+                <div class="game-info mt-4">
+                    <h3 class="text-warning">COMO JOGAR:</h3>
+                    <ul class="mt-3">
+                        <li><strong class="text-warning">MODO PROTEGEDOR:</strong> Use as setas para se mover e proteja sua Makita dos ladrões! Grite pela mãe para ativar a chinelada mortal!</li>
+                        <li><strong class="text-warning">MODO LADRÃO:</strong> Use as setas para se mover e desça para roubar a Makita! Cuidado com a chinelada da mãe!</li>
+                        <li><strong class="text-warning">ARMA SUPREMA:</strong> A CHINELA DA MÃE! Elimina qualquer ladrão instantaneamente!</li>
+                        <li><strong class="text-warning">OBJETIVO PROTETOR:</strong> Defenda sua Makita por 60 segundos ou elimine 10 ladrões!</li>
+                        <li><strong class="text-warning">OBJETIVO LADRÃO:</strong> Roube a Makita antes do tempo acabar OU antes de perder todas as vidas!</li>
+                        <li><strong class="text-danger">SISTEMA DE VIDAS:</strong> Ambos os modos têm 3 vidas. No modo protetor, perde vida quando um ladrão rouba a Makita. No modo ladrão, perde vida quando é atingido pela chinela!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="message" id="winMessage">
+        <h2 class="text-success">VITÓRIA! MAKITA PROTEGIDA! 🛠️</h2>
+        <p>Você defendeu sua preciosa Makita com sucesso!</p>
+        <p class="fw-bold">"MAKITA É SAGRADA, NÃO SE ROUBa!"</p>
+        <button class="restart-btn" onclick="restartGame()">JOGAR NOVAMENTE</button>
+    </div>
+    
+    <div class="message" id="loseMessage">
+        <h2 class="text-danger">DERROTA! MAKITA ROUBADA! 😭</h2>
+        <p>Os ladrões conseguiram fugir com sua preciosa Makita!</p>
+        <p>Na próxima, grite mais alto pela MÃE!</p>
+        <button class="restart-btn" onclick="restartGame()">TENTAR NOVAMENTE</button>
+    </div>
+    
+    <div class="message" id="thiefWinMessage">
+        <h2 class="text-warning">VITÓRIA DO LADRÃO! 🎉</h2>
+        <p>Você roubou a Makita com sucesso!</p>
+        <p>Agora corra antes que a mãe apareça!</p>
+        <button class="restart-btn" onclick="restartGame()">JOGAR NOVAMENTE</button>
+    </div>
+
+    <div class="message" id="thiefLoseMessage">
+        <h2 class="text-danger">LADRÃO ELIMINADO! 💀</h2>
+        <p>Você tomou muitas chineladas e foi pego!</p>
+        <p>A Makita continua segura!</p>
+        <button class="restart-btn" onclick="restartGame()">TENTAR NOVAMENTE</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" type="text/javascript">//<![CDATA[
+
+//]]></script>
+    <script type="text/javascript">//<![CDATA[
+
+        // Elementos do jogo
+        const protector = document.getElementById('protector');
+        const thief = document.getElementById('thief');
+        const slipper = document.getElementById('slipper');
+        const makita = document.getElementById('makita');
+        const motherShout = document.getElementById('motherShout');
+        const protectorBtn = document.getElementById('protector-btn');
+        const thiefBtn = document.getElementById('thief-btn');
+        const leftBtn = document.getElementById('left-btn');
+        const rightBtn = document.getElementById('right-btn');
+        const slipperBtn = document.getElementById('slipper-btn');
+        const thiefLeftBtn = document.getElementById('thief-left-btn');
+        const thiefRightBtn = document.getElementById('thief-right-btn');
+        const thiefDownBtn = document.getElementById('thief-down-btn');
+        const thiefStealBtn = document.getElementById('thief-steal-btn');
+        const protectorControls = document.getElementById('protector-controls');
+        const thiefControls = document.getElementById('thief-controls');
+        const winMessage = document.getElementById('winMessage');
+        const loseMessage = document.getElementById('loseMessage');
+        const thiefWinMessage = document.getElementById('thiefWinMessage');
+        const thiefLoseMessage = document.getElementById('thiefLoseMessage');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const livesDisplay = document.getElementById('lives');
+        const thiefLivesDisplay = document.getElementById('thiefLives');
+        
+        // Variáveis do jogo
+        let gameMode = 'protector';
+        let protectorX = 270;
+        let thiefX = 180;
+        let thiefY = 0;
+        let gameActive = false;
+        let slipperActive = false;
+        let slipperY = 350;
+        let score = 0;
+        let timeLeft = 60;
+        let lives = 3;
+        let thiefLives = 3;
+        let gameTimer;
+        let aiThieves = [];
+        let slipperSpeed = 25; // Chinela MUITO mais rápida!
+        
+        // Inicialização do jogo
+        function initGame() {
+            gameActive = true;
+            protectorX = 270;
+            thiefX = 180;
+            thiefY = 0;
+            slipperActive = false;
+            score = 0;
+            timeLeft = 60;
+            lives = 3;
+            thiefLives = 3;
+            aiThieves = [];
+            
+            protector.style.left = protectorX + 'px';
+            thief.style.left = thiefX + 'px';
+            thief.style.top = thiefY + 'px';
+            slipper.style.display = 'none';
+            motherShout.style.display = 'none';
+            makita.style.display = 'block';
+            
+            winMessage.style.display = 'none';
+            loseMessage.style.display = 'none';
+            thiefWinMessage.style.display = 'none';
+            thiefLoseMessage.style.display = 'none';
+            
+            scoreDisplay.textContent = 'Pontuação: 0';
+            timerDisplay.textContent = 'Tempo: 60s';
+            livesDisplay.textContent = 'Vidas: 3';
+            thiefLivesDisplay.textContent = 'Vidas Ladrão: 3';
+            
+            // Configurar controles baseado no modo
+            if (gameMode === 'protector') {
+                protectorControls.style.display = 'block';
+                thiefControls.style.display = 'none';
+                livesDisplay.style.display = 'block';
+                thiefLivesDisplay.style.display = 'none';
+                startProtectorGame();
+            } else {
+                protectorControls.style.display = 'none';
+                thiefControls.style.display = 'block';
+                livesDisplay.style.display = 'none';
+                thiefLivesDisplay.style.display = 'block';
+                startThiefGame();
+            }
+        }
+        
+        // Jogo do Protetor
+        function startProtectorGame() {
+            clearInterval(gameTimer);
+            gameTimer = setInterval(() => {
+                if (!gameActive) return;
+                
+                timeLeft--;
+                timerDisplay.textContent = `Tempo: ${timeLeft}s`;
+                
+                // Vitória por tempo
+                if (timeLeft <= 0) {
+                    endGame(true);
+                    return;
+                }
+                
+                // Vitória por pontuação
+                if (score >= 100) {
+                    endGame(true);
+                    return;
+                }
+                
+                // Adicionar ladrões AI periodicamente
+                if (Math.random() < 0.1) {
+                    spawnAIThief();
+                }
+                
+                moveAIThieves();
+                checkCollisions();
+            }, 1000);
+        }
+        
+        // Jogo do Ladrão
+        function startThiefGame() {
+            clearInterval(gameTimer);
+            gameTimer = setInterval(() => {
+                if (!gameActive) return;
+                
+                timeLeft--;
+                timerDisplay.textContent = `Tempo: ${timeLeft}s`;
+                
+                // Derrota por tempo
+                if (timeLeft <= 0) {
+                    endGame(false, 'thief');
+                    return;
+                }
+                
+                // Derrota por vidas
+                if (thiefLives <= 0) {
+                    endGame(false, 'thief');
+                    return;
+                }
+                
+                // Mover protetor AI
+                moveAIProtector();
+                checkThiefCollisions();
+            }, 1000);
+        }
+        
+        // Spawn de ladrões AI
+        function spawnAIThief() {
+            const newThief = {
+                id: Date.now(),
+                x: Math.random() * 550,
+                y: 0,
+                speed: 2 + Math.random() * 2,
+                element: document.createElement('div')
+            };
+            
+            newThief.element.className = 'ai-thief';
+            newThief.element.style.left = newThief.x + 'px';
+            newThief.element.style.top = newThief.y + 'px';
+            
+            document.getElementById('gameCanvas').appendChild(newThief.element);
+            aiThieves.push(newThief);
+        }
+        
+        // Movimento dos ladrões AI
+        function moveAIThieves() {
+            aiThieves.forEach(thief => {
+                // Movimento para baixo
+                thief.y += thief.speed;
+                
+                thief.element.style.left = thief.x + 'px';
+                thief.element.style.top = thief.y + 'px';
+                
+                // Verificar se pegou a Makita
+                if (thief.y >= 50 && Math.abs(thief.x - 280) < 30) {
+                    // Ladrão roubou a Makita!
+                    lives--;
+                    livesDisplay.textContent = `Vidas: ${lives}`;
+                    
+                    thief.element.remove();
+                    aiThieves = aiThieves.filter(t => t.id !== thief.id);
+                    
+                    if (lives <= 0) {
+                        endGame(false);
+                    } else {
+                        // Reposicionar Makita
+                        makita.style.display = 'block';
+                    }
+                }
+                
+                // Remover se saiu da tela
+                if (thief.y > 400) {
+                    thief.element.remove();
+                    aiThieves = aiThieves.filter(t => t.id !== thief.id);
+                }
+            });
+        }
+        
+        // Protetor AI (para modo ladrão)
+        function moveAIProtector() {
+            // Seguir o ladrão com inteligência
+            if (protectorX < thiefX - 15) {
+                protectorX += 4;
+            } else if (protectorX > thiefX + 15) {
+                protectorX -= 4;
+            }
+            
+            protectorX = Math.max(0, Math.min(530, protectorX));
+            protector.style.left = protectorX + 'px';
+            
+            // Atirar chinela ocasionalmente (mais frequente)
+            if (Math.random() < 0.05 && !slipperActive && thiefY > 100) {
+                activateSlipper();
+            }
+        }
+        
+        // Verificar colisões (modo protetor)
+        function checkCollisions() {
+            // Chinela vs Ladrões AI
+            if (slipperActive) {
+                aiThieves.forEach(thief => {
+                    const slipperRect = slipper.getBoundingClientRect();
+                    const thiefRect = thief.element.getBoundingClientRect();
+                    
+                    if (slipperRect.bottom >= thiefRect.top && 
+                        slipperRect.top <= thiefRect.bottom &&
+                        slipperRect.right >= thiefRect.left &&
+                        slipperRect.left <= thiefRect.right) {
+                        
+                        // Acertou o ladrão!
+                        thief.element.classList.add('thief-hit');
+                        setTimeout(() => {
+                            thief.element.remove();
+                        }, 500);
+                        
+                        aiThieves = aiThieves.filter(t => t.id !== thief.id);
+                        score += 10;
+                        scoreDisplay.textContent = `Pontuação: ${score}`;
+                        
+                        slipperActive = false;
+                        slipper.style.display = 'none';
+                    }
+                });
+                
+                // Mover a chinela (MUITO mais rápida)
+                if (slipperActive) {
+                    slipperY -= slipperSpeed;
+                    slipper.style.top = slipperY + 'px';
+                    
+                    if (slipperY <= 0) {
+                        slipperActive = false;
+                        slipper.style.display = 'none';
+                    }
+                }
+            }
+        }
+        
+        // Verificar colisões (modo ladrão) - AGORA COM SISTEMA DE PERDA!
+        function checkThiefCollisions() {
+            // Chinela vs Ladrão player
+            if (slipperActive) {
+                const slipperRect = slipper.getBoundingClientRect();
+                const thiefRect = thief.getBoundingClientRect();
+                
+                if (slipperRect.bottom >= thiefRect.top && 
+                    slipperRect.top <= thiefRect.bottom &&
+                    slipperRect.right >= thiefRect.left &&
+                    slipperRect.left <= thiefRect.right) {
+                    
+                    // Chinela acertou o ladrão! PERDE VIDA!
+                    slipperActive = false;
+                    slipper.style.display = 'none';
+                    thief.classList.add('thief-hit');
+                    
+                    thiefLives--;
+                    thiefLivesDisplay.textContent = `Vidas Ladrão: ${thiefLives}`;
+                    
+                    setTimeout(() => {
+                        thief.classList.remove('thief-hit');
+                        resetThiefPosition();
+                    }, 1000);
+                }
+                
+                // Mover a chinela (MUITO mais rápida)
+                if (slipperActive) {
+                    slipperY -= slipperSpeed;
+                    slipper.style.top = slipperY + 'px';
+                    
+                    if (slipperY <= 0) {
+                        slipperActive = false;
+                        slipper.style.display = 'none';
+                    }
+                }
+            }
+            
+            // Ladrão vs Makita
+            const thiefRect = thief.getBoundingClientRect();
+            const makitaRect = makita.getBoundingClientRect();
+            
+            if (thiefRect.bottom >= makitaRect.top && 
+                thiefRect.top <= makitaRect.bottom &&
+                thiefRect.right >= makitaRect.left &&
+                thiefRect.left <= makitaRect.right) {
+                
+                // Roubou a Makita! VITÓRIA DO LADRÃO!
+                thief.classList.add('thief-steal');
+                makita.style.display = 'none';
+                
+                setTimeout(() => {
+                    endGame(true, 'thief');
+                }, 1000);
+            }
+        }
+        
+        // Ativar a chinela
+        function activateSlipper() {
+            if (!slipperActive && gameActive) {
+                slipperActive = true;
+                slipperY = 350;
+                slipper.style.left = (protectorX + 15) + 'px';
+                slipper.style.top = slipperY + 'px';
+                slipper.style.display = 'block';
+                slipper.classList.add('slipper-fly');
+                
+                // Ativar o grito da mãe
+                motherShout.style.left = (protectorX - 50) + 'px';
+                motherShout.style.top = '200px';
+                motherShout.style.display = 'block';
+                
+                setTimeout(() => {
+                    motherShout.style.display = 'none';
+                    slipper.classList.remove('slipper-fly');
+                }, 800);
+            }
+        }
+        
+        // Movimento do protetor
+        function moveProtector(direction) {
+            if (!gameActive || gameMode !== 'protector') return;
+            
+            if (direction === 'left' && protectorX > 10) {
+                protectorX -= 20;
+            } else if (direction === 'right' && protectorX < 530) {
+                protectorX += 20;
+            }
+            
+            protector.style.left = protectorX + 'px';
+        }
+        
+        // Movimento do ladrão
+        function moveThief(direction) {
+            if (!gameActive || gameMode !== 'thief') return;
+            
+            if (direction === 'left' && thiefX > 10) {
+                thiefX -= 15;
+            } else if (direction === 'right' && thiefX < 540) {
+                thiefX += 15;
+            } else if (direction === 'down' && thiefY < 300) {
+                thiefY += 10;
+            }
+            
+            thief.style.left = thiefX + 'px';
+            thief.style.top = thiefY + 'px';
+        }
+        
+        // Resetar posição do ladrão
+        function resetThiefPosition() {
+            thiefX = Math.random() * 550;
+            thiefY = 0;
+            thief.style.left = thiefX + 'px';
+            thief.style.top = thiefY + 'px';
+        }
+        
+        // Finalizar o jogo
+        function endGame(isWin, winner = 'protector') {
+            gameActive = false;
+            clearInterval(gameTimer);
+            
+            // Limpar ladrões AI
+            aiThieves.forEach(thief => {
+                if (thief.element.parentNode) {
+                    thief.element.remove();
+                }
+            });
+            aiThieves = [];
+            
+            if (winner === 'thief') {
+                if (isWin) {
+                    thiefWinMessage.style.display = 'block';
+                } else {
+                    thiefLoseMessage.style.display = 'block';
+                }
+            } else {
+                if (isWin) {
+                    winMessage.style.display = 'block';
+                } else {
+                    loseMessage.style.display = 'block';
+                }
+            }
+            
+            // Auto-reset após 5 segundos
+            setTimeout(restartGame, 5000);
+        }
+        
+        // Reiniciar o jogo
+        function restartGame() {
+            initGame();
+        }
+        
+        // Event Listeners
+        protectorBtn.addEventListener('click', () => {
+            gameMode = 'protector';
+            protectorBtn.classList.add('active');
+            thiefBtn.classList.remove('active');
+            initGame();
+        });
+        
+        thiefBtn.addEventListener('click', () => {
+            gameMode = 'thief';
+            thiefBtn.classList.add('active');
+            protectorBtn.classList.remove('active');
+            initGame();
+        });
+        
+        // Controles do protetor
+        leftBtn.addEventListener('click', () => moveProtector('left'));
+        rightBtn.addEventListener('click', () => moveProtector('right'));
+        slipperBtn.addEventListener('click', activateSlipper);
+        
+        // Controles do ladrão
+        thiefLeftBtn.addEventListener('click', () => moveThief('left'));
+        thiefRightBtn.addEventListener('click', () => moveThief('right'));
+        thiefDownBtn.addEventListener('click', () => moveThief('down'));
+        thiefStealBtn.addEventListener('click', () => {
+            // Verificar se está perto da Makita para roubar
+            const thiefRect = thief.getBoundingClientRect();
+            const makitaRect = makita.getBoundingClientRect();
+            
+            if (thiefRect.bottom >= makitaRect.top - 20) {
+                thief.classList.add('thief-steal');
+                makita.style.display = 'none';
+                
+                setTimeout(() => {
+                    endGame(true, 'thief');
+                }, 1000);
+            }
+        });
+        
+        // Controles de teclado
+        document.addEventListener('keydown', (e) => {
+            if (gameMode === 'protector') {
+                if (e.key === 'ArrowLeft') {
+                    moveProtector('left');
+                } else if (e.key === 'ArrowRight') {
+                    moveProtector('right');
+                } else if (e.key === ' ' || e.key === 'Spacebar') {
+                    activateSlipper();
+                }
+            } else if (gameMode === 'thief') {
+                if (e.key === 'ArrowLeft') {
+                    moveThief('left');
+                } else if (e.key === 'ArrowRight') {
+                    moveThief('right');
+                } else if (e.key === 'ArrowDown') {
+                    moveThief('down');
+                } else if (e.key === ' ') {
+                    // Verificar roubo com espaço também
+                    const thiefRect = thief.getBoundingClientRect();
+                    const makitaRect = makita.getBoundingClientRect();
+                    
+                    if (thiefRect.bottom >= makitaRect.top - 20) {
+                        thief.classList.add('thief-steal');
+                        makita.style.display = 'none';
+                        
+                        setTimeout(() => {
+                            endGame(true, 'thief');
+                        }, 1000);
+                    }
+                }
+            }
+        });
+        
+        // Iniciar o jogo no modo protetor por padrão
+        protectorBtn.classList.add('active');
+        initGame();
+    
+//]]></script>
+</body>
+</html>
